@@ -75,7 +75,7 @@ cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, label
 
 # Define optimizer
 optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
-grad = optimizer.compute_gradients(cost)
+#grad = optimizer.compute_gradients(cost)
 
 def generate_coord( width, height ):
     return np.array(list(itertools.product(np.linspace(0,1, width), np.linspace(0,1, height)))).reshape(width * height, 2)
@@ -105,8 +105,8 @@ with tf.Session() as sess:
             batch_x = training_images[i:(i+batch_size),:]
             batch_y = training_labels[i:(i+batch_size),:]
 
-#            _, c = sess.run([optimizer, cost], feed_dict={x: batch_x, y: batch_y})
-            c = sess.run([cost], feed_dict={x: batch_x, y: batch_y})
+            _, c = sess.run([optimizer, cost], feed_dict={x: batch_x, y: batch_y})
+#            c = sess.run([cost], feed_dict={x: batch_x, y: batch_y})
 
             #Compute average loss
             avg_cost += c/total_batch
@@ -114,7 +114,7 @@ with tf.Session() as sess:
             i += batch_size
         
             # Generate weight matrix
-            generated_weights = sess.run([cppn], feed_dict={cppn_inputs: generate_coord(width = n_inputs, height = n_outputs)})
+            generated_weights = sess.run(cppn, feed_dict={cppn_inputs: generate_coord(width = n_inputs, height = n_outputs)})
             generated_weights = generated_weights.reshape((n_inputs, n_outputs, 2))
 
             # Update the main NN with generated weights
