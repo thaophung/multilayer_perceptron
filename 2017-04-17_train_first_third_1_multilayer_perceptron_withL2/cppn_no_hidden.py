@@ -34,7 +34,7 @@ label2.close()
 learning_rate = 0.1
 training_epochs = 10000
 batch_size = 47
-display_step = 1
+display_step = 100
 
 beta = 0.0005
 # Network Parmeters
@@ -63,7 +63,7 @@ biases = {
 pred = multilayer_perceptron(x, weights, biases)
 
 # Construct CPPN
-cppn, cppn_inputs = build_cppn()
+cppn, train_cppn_op, cppn_inputs, cppn_outputs = build_cppn()
 
 # Use pickle to save any object to file/disk
 # Define normal loss 
@@ -74,8 +74,13 @@ cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, label
 #cost = tf.reduce_mean(cost + beta * regularizers)
 
 # Define optimizer
-optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
+optimizer = tf.train.GradientDescentOptimizer(learning_rate=1.0).minimize(cost)
+
+#optimizer = tf.train.AdamOptimizer(learning_rate=1.0).minimize(cost)
+
+#optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
 #grad = optimizer.compute_gradients(cost)
+#train_op = optimizer.apply_gradients(grad)
 
 def generate_coord( width, height ):
     return np.array(list(itertools.product(np.linspace(0,1, width), np.linspace(0,1, height)))).reshape(width * height, 2)
@@ -93,11 +98,7 @@ with tf.Session() as sess:
         #total_batch = int(mnist.train.num_examples/batch_size)
         # Loop over all batches
         total_batch = 1
-        #for i in range(total_batch):
-#            batch_x, batch_y = mnist.train.next_batch(batch_size)
-            #batch_x, batch_y = next_batch(batch_size)
-#            ipdb.set_trace()
-            # Run optimization op (backprop) and cost op (to get loss value)
+
         i=0
 
         while i < total_batch:
@@ -105,16 +106,21 @@ with tf.Session() as sess:
             batch_x = training_images[i:(i+batch_size),:]
             batch_y = training_labels[i:(i+batch_size),:]
 
+            # Backprop the error for the task to NN
             _, c = sess.run([optimizer, cost], feed_dict={x: batch_x, y: batch_y})
-#            c = sess.run([cost], feed_dict={x: batch_x, y: batch_y})
 
             #Compute average loss
             avg_cost += c/total_batch
     
-            i += batch_size
+            # Get the gradient and update CPPN
+#            sess.run(train_cppn_op, feed_dict={cppn_inputs: })
         
-            # Generate weight matrix
-            generated_weights = sess.run(cppn, feed_dict={cppn_inputs: generate_coord(width = n_inputs, height = n_outputs)})
+            # Generate weight matrix via the updated CPPN
+            _, generated_weights = sess.run([train_cppn_op, cppn], 
+                        feed_dict={
+                                cppn_inputs: generate_coord(width = n_inputs, height = n_outputs),
+                                cppn_outputs: tf.reshape( weights['out'], ( n_inputs * n_outputs, 1)).eval() 
+                            })
             generated_weights = generated_weights.reshape((n_inputs, n_outputs, 2))
 
             # Update the main NN with generated weights
@@ -122,6 +128,8 @@ with tf.Session() as sess:
             update_biases = tf.assign(biases['out'], generated_weights[0,:,1])
 
             sess.run( [update_weights, update_biases] )
+
+            i += batch_size
 
         #Display logs per epoch step
         if epoch % display_step == 0:
