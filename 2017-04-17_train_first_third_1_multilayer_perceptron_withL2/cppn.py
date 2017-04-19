@@ -5,15 +5,15 @@ def init_weights(shape):
     return tf.Variable(tf.truncated_normal(shape, stddev=0.1))
 
 def build (X, w):
-    h = tf.nn.relu(tf.matmul(X, w['h1']))
-    h = tf.nn.relu(tf.matmul(h, w['h2']))
+    h = tf.sin(tf.matmul(X, w['h1']))
+    h = tf.sin(tf.matmul(h, w['h2']))
     output = tf.matmul(h, w['out'])
     return output
 
 def build_cppn ():
     cppn_inputs = 2
     cppn_outputs = 2
-    cppn_units = 3 
+    cppn_units = 10 
 
     with tf.name_scope("cppn"):
 

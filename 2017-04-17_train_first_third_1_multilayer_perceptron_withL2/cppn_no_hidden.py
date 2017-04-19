@@ -25,8 +25,12 @@ img2.close()
 label1.close()
 label2.close()
 
-#for i in range(len(training_images)):
-#    print_equation(training_images[i], training_labels[i])
+for i in range(len(training_images)):
+    print_equation(training_images[i], training_labels[i])
+
+print ("----------")
+for i in range(len(testing_images)):
+    print_equation(testing_images[i], testing_labels[i])
 #ipdb.set_trace()
 
 
@@ -34,7 +38,7 @@ label2.close()
 learning_rate = 0.1
 training_epochs = 10000
 batch_size = 47
-display_step = 100
+display_step = training_epochs / 10
 
 beta = 0.0005
 # Network Parmeters
@@ -115,6 +119,7 @@ with tf.Session() as sess:
             # Get the gradient and update CPPN
 #            sess.run(train_cppn_op, feed_dict={cppn_inputs: })
         
+            '''
             # Generate weight matrix via the updated CPPN
             _, generated_weights = sess.run([train_cppn_op, cppn], 
                         feed_dict={
@@ -126,8 +131,9 @@ with tf.Session() as sess:
             # Update the main NN with generated weights
             update_weights = tf.assign(weights['out'], generated_weights[:,:,0])
             update_biases = tf.assign(biases['out'], generated_weights[0,:,1])
-
             sess.run( [update_weights, update_biases] )
+
+            '''
 
             i += batch_size
 
@@ -136,12 +142,14 @@ with tf.Session() as sess:
             print("Epoch:", '%04d' % (epoch+1), "cost=", \
                     "{:.9f}".format(avg_cost))
 
+            # Test model
+            correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(y,1))
+
+            # Calculate accuracy
+            accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
+
+            print ("Training accuracy:", accuracy.eval({x:training_images, y: training_labels}))
+            print("Test accuracy:", accuracy.eval({x:testing_images, y: testing_labels}))
+
     print ("Optimization Finish!")
 
-    # Test model
-    correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(y,1))
-    # Calculate accuracy
-    accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
-
-    print ("Training accuracy:", accuracy.eval({x:training_images, y: training_labels}))
-    print("Test accuracy:", accuracy.eval({x:testing_images, y: testing_labels}))
