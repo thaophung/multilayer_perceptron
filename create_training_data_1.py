@@ -24,7 +24,7 @@ def create_data(batch_size):
             j += 1
         # Create 1+ without 1+2
         for j in range(20,30):
-            if j == 22:
+            if j == 28:             # If you want exlude 1+8, (if j == 28),  if you want exclude 1+3, (if j = 23)
                 j+=1
                 continue
             inputs[i,1] = 1
@@ -35,10 +35,10 @@ def create_data(batch_size):
             i+=1
         # Create +1 without 2+1
         for j in range(30,40):
-            if j == 32:
+            if j == 38:             # exclude 8+1 (if j == 38), exclude 3+1, (if j == 31), 
                 j+=1
                 continue
-            inputs[i, j-30] = 1
+            inputs[i, j-30] = 1     
             inputs[i, 10] = 1
             inputs[i, 13] = 1
             labels[i,j- 30 +1] = 1

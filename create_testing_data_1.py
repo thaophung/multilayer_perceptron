@@ -14,12 +14,12 @@ def create_data(batch_size):
         for j in range(0,1):
             inputs[j+i,1] = 1
             inputs[j+i,10] = 1
-            inputs[j+i,14] = 1
+            inputs[j+i,20] = 1
             labels[j+i,3] =1
             j += 1
         # 2+1
         for j in range(1,2):
-            inputs[j+i,2] = 1
+            inputs[j+i,8] = 1
             inputs[j+i,10] = 1
             inputs[j+i,13] =1
             labels[j+i, 3] = 1
