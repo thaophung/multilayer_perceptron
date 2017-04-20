@@ -42,7 +42,7 @@ for i in range(len(testing_images)):
 learning_rate = 1
 training_epochs = 10000
 batch_size = 47
-display_step = training_epochs / 10
+display_step = training_epochs / 100
 
 beta = 0.0005
 
@@ -129,6 +129,8 @@ with tf.Session() as sess:
             # Get the gradient and update CPPN
         
 #            '''
+
+#            print (epoch, "CPPN....")
             # Generate weight matrix via the updated CPPN
             _, generated_weights = sess.run([train_cppn_op, cppn], 
                         feed_dict={
