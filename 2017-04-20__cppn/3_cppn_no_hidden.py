@@ -29,14 +29,14 @@ img2.close()
 label1.close()
 label2.close()
 
-'''
+#'''
 for i in range(len(training_images)):
     print_equation(training_images[i], training_labels[i])
 
 print ("----------")
 for i in range(len(testing_images)):
     print_equation(testing_images[i], testing_labels[i])
-'''
+#'''
 
 # Parameter
 learning_rate = 1
@@ -127,9 +127,8 @@ with tf.Session() as sess:
             avg_cost += c/total_batch
     
             # Get the gradient and update CPPN
-#            sess.run(train_cppn_op, feed_dict={cppn_inputs: })
         
-            '''
+#            '''
             # Generate weight matrix via the updated CPPN
             _, generated_weights = sess.run([train_cppn_op, cppn], 
                         feed_dict={
@@ -143,7 +142,7 @@ with tf.Session() as sess:
             update_biases = tf.assign(biases['out'], generated_weights[0,:,1])
             sess.run( [update_weights, update_biases] )
 
-            '''
+#            '''
 
             i += batch_size
 
