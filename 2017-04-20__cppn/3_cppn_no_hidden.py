@@ -128,9 +128,7 @@ with tf.Session() as sess:
     
             # Get the gradient and update CPPN
         
-#            '''
-
-#            print (epoch, "CPPN....")
+            '''
             # Generate weight matrix via the updated CPPN
             _, generated_weights = sess.run([train_cppn_op, cppn], 
                         feed_dict={
@@ -143,8 +141,7 @@ with tf.Session() as sess:
             update_weights = tf.assign(weights['out'], generated_weights[:,:,0])
             update_biases = tf.assign(biases['out'], generated_weights[0,:,1])
             sess.run( [update_weights, update_biases] )
-
-#            '''
+            '''
 
             i += batch_size
 
