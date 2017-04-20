@@ -2,11 +2,15 @@ import numpy as np
 import random
 import pickle
 
-
 def create_data(batch_size):
     inputs = np.zeros((batch_size,22))
     labels = np.zeros((batch_size,19))
-    #for i in range(0,batch_size-1):
+
+    # first digit: [0:10]
+    # operator +: [10]
+    # operator -: [11]
+    # second digit: [12:22]
+
     i = 0
     while i < batch_size:
         j = 0
@@ -57,6 +61,14 @@ def create_data(batch_size):
             i+=1
             j+=1
 
+    # shuffle data
+#    indices = [ x for x in range(batch_size) ]
+#    np.random.shuffle(indices)
+#
+#    inputs = np.array( [ np.array(inputs[idx]) for idx in indices ] )
+#    labels = np.array( [ np.array(labels[idx]) for idx in indices ] )
+
+    # Save to files
     image_output = open("math.training.images", "wb")
     pickle.dump(inputs,image_output)
     
