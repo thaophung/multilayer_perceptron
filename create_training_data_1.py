@@ -57,6 +57,14 @@ def create_data(batch_size):
             i+=1
             j+=1
 
+    # shuffle data
+    indices = [ x for x in range(batch_size) ]
+    np.random.shuffle(indices)
+
+    shuffled_inputs = np.array( [ np.array(inputs[idx]) for idx in indices ] )
+    shuffled_labels = np.array( [ np.array(labels[idx]) for idx in indices ] )
+
+    # Save to files
     image_output = open("math.training.images", "wb")
     pickle.dump(inputs,image_output)
     
