@@ -13,7 +13,7 @@ def build (X, w):
 def build_cppn ():
     cppn_inputs = 2
     cppn_outputs = 2
-    cppn_units = 10 
+    cppn_units = 100 
 
     with tf.name_scope("cppn"):
 
