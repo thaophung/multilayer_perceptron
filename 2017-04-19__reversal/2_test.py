@@ -45,7 +45,7 @@ beta = 0
 
 # Network Parmeters
 n_inputs = 15   # MNIST data input(img shape: 28x28)   # 22
-n_hidden = 50
+n_hidden = 100
 n_outputs = 15  # MNIST total classes (0-9 digits)     # 19
 
 checkpoint_path = "./snapshots"
@@ -185,7 +185,7 @@ with tf.Session() as sess:
         if epoch % display_step == 0:
 
             # Test model
-            correct_prediction = tf.equal(tf.norm(tf.subtract(pred, y)), 0)
+            correct_prediction = tf.equal( tf.norm( tf.subtract(pred, y), axis=1 ), 0 )
 
             # Calculate accuracy
             accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
@@ -198,25 +198,17 @@ with tf.Session() as sess:
                         "train=", "{:.4f}".format(train_accuracy), \
                         "test=", "{:.4f}".format(test_accuracy)) 
 
+#            '''
             total_correct = 0
-            for j in range(10000):
-                test_X = training_images[j]
-                test_Y = training_labels[j][::-1]
+            for j in range(training_images.shape[0]):
+                test_X = training_images[j].copy()
+                test_Y = training_labels[j].copy()
 
-#                if test_X.tolist() == test_Y.tolist():
-#                    total_correct += 1
-
-#                print (j, test_X == test_Y)
-#                print ("=================")
                 aa = pred.eval({x:test_X.reshape(1, 15)})[0]
-                if test_Y.tolist() == aa.tolist():
-#
+                if test_Y.tolist() != aa.tolist():
+
                     total_correct += 1
-#                    print (j, "==========================")
-#                    print (test_X)
-#                    print ("----")
                     print (aa)
-#                    print ("---")
                     print (test_Y)
 
             print (total_correct, "/", 10000)
