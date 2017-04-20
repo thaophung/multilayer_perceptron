@@ -13,13 +13,12 @@ def build (X, w):
 #def generate_coord( width, height ):
 #    return np.array(list(itertools.product(np.linspace(0,1, width), np.linspace(0,1, height)))).reshape(width * height, 2)
 
-def build_cppn ():
+def build_cppn (L2_weight):
     cppn_inputs = 2
     cppn_outputs = 2
     cppn_units = 20 
 
 #    generate_coord(width = n_inputs, height = n_outputs),
-
     with tf.name_scope("cppn"):
 
         # Inputs are coordinates
@@ -36,4 +35,7 @@ def build_cppn ():
 
         cppn = build (X, w)
 
-    return cppn, X, Y
+        regularizers = tf.nn.l2_loss(w['h1']) + tf.nn.l2_loss(w['h2']) + tf.nn.l2_loss(w['out']) 
+        cost = tf.reduce_mean(L2_weight * regularizers)
+
+    return cppn, cost, X, Y

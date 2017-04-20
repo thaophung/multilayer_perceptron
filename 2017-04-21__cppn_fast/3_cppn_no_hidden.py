@@ -42,7 +42,7 @@ training_epochs = 1000
 batch_size = 47
 display_step = training_epochs / 10
 
-beta = 0.005
+L2_weight = 0.005
 
 # Network Parmeters
 n_inputs = 22    # MNIST data input(img shape: 28x28)   # 22
@@ -66,7 +66,7 @@ def multilayer_perceptron(x, weights, biases):
     return out_layer
 
 # Construct CPPN
-cppn, cppn_inputs, cppn_outputs = build_cppn()
+cppn, cppn_loss, cppn_inputs, cppn_outputs = build_cppn(L2_weight=L2_weight)
 cppn = tf.reshape( cppn, (n_inputs, n_outputs, 2))
 
 W = cppn[:,:,0]
@@ -78,10 +78,6 @@ pred = multilayer_perceptron(x, W, B)
 # Use pickle to save any object to file/disk
 # Define normal loss 
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=y))
-
-# Loss function with L2 Regularization with beta = 0.01
-regularizers = tf.nn.l2_loss(W) + tf.nn.l2_loss(B)
-cost = tf.reduce_mean(cost + beta * regularizers)
 
 # Define optimizer
 optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)
