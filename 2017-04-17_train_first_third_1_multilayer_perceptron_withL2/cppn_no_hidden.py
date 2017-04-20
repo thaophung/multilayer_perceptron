@@ -31,8 +31,6 @@ for i in range(len(training_images)):
 print ("----------")
 for i in range(len(testing_images)):
     print_equation(testing_images[i], testing_labels[i])
-#ipdb.set_trace()
-
 
 # Parameter
 learning_rate = 0.1
@@ -41,6 +39,7 @@ batch_size = 47
 display_step = training_epochs / 10
 
 beta = 0.0005
+
 # Network Parmeters
 n_inputs = 22    # MNIST data input(img shape: 28x28)   # 22
 n_outputs = 19   # MNIST total classes (0-9 digits)     # 19
