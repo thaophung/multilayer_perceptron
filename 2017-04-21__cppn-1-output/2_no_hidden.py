@@ -89,6 +89,7 @@ pred = multilayer_perceptron(x, weights, biases)
 # Define normal loss 
 #cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=y))
 cost = tf.reduce_mean(tf.squared_difference(pred, y))
+#cost = tf.reduce_mean(tf.squared_difference(tf.cast(pred, tf.int32), tf.cast(y, tf.int32)))
 # Loss function with L2 Regularization with beta = 0.01
 regularizers = tf.nn.l2_loss(weights['out']) + tf.nn.l2_loss(weights['h1'])
 cost = tf.reduce_mean(cost + beta * regularizers)
