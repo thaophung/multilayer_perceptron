@@ -29,14 +29,14 @@ img2.close()
 label1.close()
 label2.close()
 
-'''
+#'''
 for i in range(len(training_images)):
     print_equation(training_images[i], training_labels[i])
 
 print ("----------")
 for i in range(len(testing_images)):
     print_equation(testing_images[i], testing_labels[i])
-'''
+#'''
 
 # Parameter
 learning_rate = 0.1
