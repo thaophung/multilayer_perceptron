@@ -39,16 +39,17 @@ for i in range(len(testing_images)):
 '''
 
 # Parameter
-learning_rate = 1
+learning_rate = 0.1
 training_epochs = 10000
 batch_size = 47
 display_step = training_epochs / 10
 
-beta = 0.0005
+beta = 0.005
 
 # Network Parmeters
 n_inputs = 22    # MNIST data input(img shape: 28x28)   # 22
-n_outputs = 19   # MNIST total classes (0-9 digits)     # 19
+n_hidden = 10 # MNIST data input(img shape: 28x28)   # 22
+n_outputs = 1   # MNIST total classes (0-9 digits)     # 19
 
 # Random seed
 SEED = 0
@@ -62,14 +63,19 @@ y = tf.placeholder("float", [None, n_outputs])
 # Create model
 def multilayer_perceptron(x, weights, biases):
     # Output layer with linear activation
-    out_layer = tf.matmul(x, weights['out']) + biases['out']
+    h1 = tf.matmul(x, weights['h1']) + biases['h1']
+    h1 = tf.nn.relu(h1)
+
+    out_layer = tf.matmul(h1, weights['out']) + biases['out']
     return out_layer
 
 # Store layers weight and bias
 weights = {
-    'out': tf.Variable(tf.random_normal([n_inputs, n_outputs]))
+    'h1': tf.Variable(tf.random_normal([n_inputs, n_hidden ])),
+    'out': tf.Variable(tf.random_normal([n_hidden, n_outputs]))
 }
 biases = {
+    'h1': tf.Variable(tf.random_normal([n_hidden])),
     'out': tf.Variable(tf.random_normal([n_outputs]))
 }
 
@@ -77,15 +83,15 @@ biases = {
 pred = multilayer_perceptron(x, weights, biases)
 
 # Construct CPPN
-cppn, train_cppn_op, cppn_inputs, cppn_outputs = build_cppn()
+#cppn, train_cppn_op, cppn_inputs, cppn_outputs = build_cppn()
 
 # Use pickle to save any object to file/disk
 # Define normal loss 
-cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=y))
-
+#cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=y))
+cost = tf.reduce_mean(tf.squared_difference(pred, y))
 # Loss function with L2 Regularization with beta = 0.01
-#regularizers = tf.nn.l2_loss(weights['out']) + tf.nn.l2_loss(weights['out'])
-#cost = tf.reduce_mean(cost + beta * regularizers)
+regularizers = tf.nn.l2_loss(weights['out']) + tf.nn.l2_loss(weights['h1'])
+cost = tf.reduce_mean(cost + beta * regularizers)
 
 # Define optimizer
 optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)
@@ -129,29 +135,13 @@ with tf.Session() as sess:
             # Get the gradient and update CPPN
 #            sess.run(train_cppn_op, feed_dict={cppn_inputs: })
         
-            '''
-            # Generate weight matrix via the updated CPPN
-            _, generated_weights = sess.run([train_cppn_op, cppn], 
-                        feed_dict={
-                                cppn_inputs: generate_coord(width = n_inputs, height = n_outputs),
-                                cppn_outputs: tf.reshape( weights['out'], ( n_inputs * n_outputs, 1)).eval() 
-                            })
-            generated_weights = generated_weights.reshape((n_inputs, n_outputs, 2))
-
-            # Update the main NN with generated weights
-            update_weights = tf.assign(weights['out'], generated_weights[:,:,0])
-            update_biases = tf.assign(biases['out'], generated_weights[0,:,1])
-            sess.run( [update_weights, update_biases] )
-
-            '''
-
             i += batch_size
 
         # Display logs per epoch step
         if epoch % display_step == 0:
 
             # Test model
-            correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(y,1))
+            correct_prediction = tf.equal(tf.cast(pred, dtype=tf.int32), tf.cast(y, dtype=tf.int32))
 
             # Calculate accuracy
             accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))

@@ -4,7 +4,7 @@ import pickle
 
 def create_data(batch_size):
     inputs = np.zeros((batch_size,22))
-    labels = np.zeros((batch_size,19))
+    labels = np.zeros((batch_size,1))
 
     # first digit: [0:10]
     # operator +: [10]
@@ -17,13 +17,13 @@ def create_data(batch_size):
         # Create first digit and blank
         for j in range(0,10):
             inputs[i,j] = 1
-            labels[i,j] =1
+            labels[i,0] = j
             i += 1
             j += 1
         # Create blank and digit
         for j in range(10,20):
             inputs[i,j+12-10] = 1
-            labels[i, j-10] = 1
+            labels[i, 0] = j-10
             i+=1
             j += 1
         # Create 1+ without 1+2
@@ -34,7 +34,7 @@ def create_data(batch_size):
             inputs[i,1] = 1
             inputs[i,10] = 1
             inputs[i,j-20+12] = 1
-            labels[i,j-20+1] = 1
+            labels[i,0] = j-20+1
             j+= 1
             i+=1
         # Create +1 without 2+1
@@ -45,7 +45,7 @@ def create_data(batch_size):
             inputs[i, j-30] = 1     
             inputs[i, 10] = 1
             inputs[i, 13] = 1
-            labels[i,j- 30 +1] = 1
+            labels[i,0] = j-30+1 
             i+=1
             j+=1
         
@@ -57,7 +57,7 @@ def create_data(batch_size):
             inputs[i,j-40]=1
             inputs[i,11] = 1
             inputs[i, 13] = 1
-            labels[i, j-40-1] = 1
+            labels[i, 0] = j-40-1
             i+=1
             j+=1
 

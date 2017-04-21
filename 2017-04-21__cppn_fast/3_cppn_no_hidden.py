@@ -29,12 +29,12 @@ img2.close()
 label1.close()
 label2.close()
 
-#for i in range(len(training_images)):
-#    print_equation(training_images[i], training_labels[i])
-#
-#print ("----------")
-#for i in range(len(testing_images)):
-#    print_equation(testing_images[i], testing_labels[i])
+for i in range(len(training_images)):
+    print_equation(training_images[i], training_labels[i])
+
+print ("----------")
+for i in range(len(testing_images)):
+    print_equation(testing_images[i], testing_labels[i])
 
 # Parameter
 learning_rate = 0.1
@@ -80,7 +80,7 @@ pred = multilayer_perceptron(x, W, B)
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=y))
 
 # Define optimizer
-optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)
+optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 
 def generate_coord( width, height ):
     return np.array(list(itertools.product(np.linspace(0,1, width), np.linspace(0,1, height)))).reshape(width * height, 2)

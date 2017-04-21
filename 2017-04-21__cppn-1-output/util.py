@@ -18,11 +18,11 @@ def print_equation(feature, label):
         equation_label += equation
     equation_label += " = "
 
-    label_idx = np.argmax( label )
+#    label_idx = np.argmax( label )
 #    for i in range (len(label)):
 #        if label[i] == 1:
 #            equation_label += str(i)
-    equation_label += str( label_idx )
+    equation_label += str( int(label[0]) )
 
     print equation_label
               

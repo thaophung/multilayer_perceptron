@@ -5,7 +5,7 @@ import pickle
 
 def create_data(batch_size):
     inputs = np.zeros((batch_size,22))
-    labels = np.zeros((batch_size,19))
+    labels = np.zeros((batch_size,1))
     #for i in range(0,batch_size-1):
     i = 0
     while i < batch_size:
@@ -15,14 +15,14 @@ def create_data(batch_size):
             inputs[j+i,1] = 1
             inputs[j+i,10] = 1
             inputs[j+i,20] = 1
-            labels[j+i,9] =1
+            labels[j+i,0] = 9
             j += 1
         # 2+1
         for j in range(1,2):
             inputs[j+i,8] = 1
             inputs[j+i,10] = 1
             inputs[j+i,13] =1
-            labels[j+i, 9] = 1
+            labels[j+i, 0] = 9
             j+= 1
         # Create 0+
         i = i+2

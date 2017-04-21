@@ -42,11 +42,11 @@ training_epochs = 1000
 batch_size = 47
 display_step = training_epochs / 10
 
-L2_weight = 0.005
+L2_weight = 0.05
 
 # Network Parmeters
 n_inputs = 22    # MNIST data input(img shape: 28x28)   # 22
-n_outputs = 19   # MNIST total classes (0-9 digits)     # 19
+n_outputs = 1   # MNIST total classes (0-9 digits)     # 19
 
 # Random seed
 SEED = 0
@@ -77,7 +77,8 @@ pred = multilayer_perceptron(x, W, B)
 
 # Use pickle to save any object to file/disk
 # Define normal loss 
-cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=y))
+#cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=y))
+cost = tf.reduce_mean(tf.squared_difference(pred, y))
 
 # Define optimizer
 #optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)
@@ -130,7 +131,8 @@ with tf.Session() as sess:
         if epoch % display_step == 0:
 
             # Test model
-            correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(y,1))
+#            correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(y,1))
+            correct_prediction = tf.equal(tf.cast(pred, dtype=tf.int32), tf.cast(y, dtype=tf.int32))
 
             # Calculate accuracy
             accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
