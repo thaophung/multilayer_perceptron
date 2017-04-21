@@ -43,12 +43,13 @@ learning_rate = 0.1
 training_epochs = 10000
 batch_size = 47
 display_step = training_epochs / 10
+test_step = training_epochs / 100
 
 beta = 0.005
 
 # Network Parmeters
-n_inputs = 22    # MNIST data input(img shape: 28x28)   # 22
-n_hidden = 10 # MNIST data input(img shape: 28x28)   # 22
+n_inputs = 22   # MNIST data input(img shape: 28x28)   # 22
+n_hidden = 10   # MNIST data input(img shape: 28x28)   # 22
 n_outputs = 1   # MNIST total classes (0-9 digits)     # 19
 
 # Random seed
@@ -95,11 +96,10 @@ regularizers = tf.nn.l2_loss(weights['out']) + tf.nn.l2_loss(weights['h1'])
 cost = tf.reduce_mean(cost + beta * regularizers)
 
 # Define optimizer
-optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)
+#optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)
 
-#optimizer = tf.train.AdamOptimizer(learning_rate=1.0).minimize(cost)
+optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 
-#optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
 #grad = optimizer.compute_gradients(cost)
 #train_op = optimizer.apply_gradients(grad)
 
@@ -112,6 +112,9 @@ init = tf.global_variables_initializer()
 # Launch the graph
 with tf.Session() as sess:
     sess.run(init)
+
+    prev_train_accuracy = 0
+    prev_test_accuracy = 0
 
     # Training cycle
     for epoch in range (training_epochs):
@@ -138,9 +141,7 @@ with tf.Session() as sess:
         
             i += batch_size
 
-        # Display logs per epoch step
-        if epoch % display_step == 0:
-
+        if epoch % test_step == 0:
             # Test model
             correct_prediction = tf.equal(tf.cast(pred, dtype=tf.int32), tf.cast(y, dtype=tf.int32))
 
@@ -150,12 +151,17 @@ with tf.Session() as sess:
             train_accuracy = accuracy.eval({x:training_images, y: training_labels})
             test_accuracy = accuracy.eval({x:testing_images, y: testing_labels})
 
+        # Display logs per epoch step
+        if epoch % display_step == 0:
+
             print("Epoch:", '%04d' % (epoch+1), \
                         "cost=", "{:.9f}".format(avg_cost), \
                         "train=", "{:.4f}".format(train_accuracy), \
-                        "test=", "{:.4f}".format(test_accuracy)) 
+                        "test=", "{:.4f}".format(test_accuracy), \
+                        "best train=", "{:.4f}".format(prev_train_accuracy), \
+                        "best test=", "{:.4f}".format(prev_test_accuracy))
 
-            for j in [ 10, 20, 30 ]:
+            for j in [ 0, 5, 10, 15, 20, 25, 30 ]:
                 test_eq = training_images[j]
                 test_answer = pred.eval({x: test_eq.reshape(1, 22)})[0]
                 print_equation(test_eq.tolist(), test_answer.tolist())
@@ -166,5 +172,32 @@ with tf.Session() as sess:
                 test_answer = pred.eval({x: test_eq.reshape(1, 22)})[0]
                 print_equation(test_eq.tolist(), test_answer.tolist())
 #            ipdb.set_trace()
+
+        if train_accuracy > prev_train_accuracy:
+            prev_train_accuracy = train_accuracy
+        if test_accuracy > prev_test_accuracy:
+            prev_test_accuracy = test_accuracy
+
+
+        if prev_train_accuracy == 1.0 and prev_test_accuracy == 1.0:
+            print("Epoch:", '%04d' % (epoch+1), \
+                        "cost=", "{:.9f}".format(avg_cost), \
+                        "train=", "{:.4f}".format(train_accuracy), \
+                        "test=", "{:.4f}".format(test_accuracy), \
+                        "best train=", "{:.4f}".format(prev_train_accuracy), \
+                        "best test=", "{:.4f}".format(prev_test_accuracy))
+
+            for j in [ 0, 5, 10, 15, 20, 25, 30 ]:
+                test_eq = training_images[j]
+                test_answer = pred.eval({x: test_eq.reshape(1, 22)})[0]
+                print_equation(test_eq.tolist(), test_answer.tolist())
+
+            for j in range(testing_images.shape[0]):
+
+                test_eq = testing_images[j]
+                test_answer = pred.eval({x: test_eq.reshape(1, 22)})[0]
+                print_equation(test_eq.tolist(), test_answer.tolist())
+            break
+
     print ("Optimization Finish!")
 
