@@ -1,12 +1,12 @@
-   
 
-def print_equation(feature, label):
+
+def print_equation(inputs, labels):
 #    print "4 = 4"
 #    print "4 + 2 = 1"
     equation_label = ""
-    for i in range(len(feature)):
+    for i in range(len(inputs)):
         equation = ""
-        if feature[i]==1:
+        if inputs[i]==1:
             if i<10:
                 equation += str(i)
             elif i == 10:
@@ -17,8 +17,8 @@ def print_equation(feature, label):
                 equation += str(i%12)
         equation_label += equation
     equation_label += " = "
-    for i in range (len(label)):
-        if label[i] == 1:
+    for i in range (len(labels)):
+        if labels[i] == 1:
             equation_label += str(i)
     print equation_label
               
