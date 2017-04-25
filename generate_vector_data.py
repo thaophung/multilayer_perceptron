@@ -31,15 +31,7 @@ def create_vector(equation):
     return input_vector, label_vector
 
 # Create whole training and test set
-def create_data():
-    # Write the equations you want heldout in the helout list e.g 1+2, 4+3, 9-0
-    heldout = ['1+2', '2+1', '1+6']
-
-    # Write the equations you want to generate: eg. +1, 1+, 0+, +0,
-    # For equations have only 1 digit, 
-    #       first operand: put 'first'
-    #       second operand: put 'third'
-    equations = ['first', 'third', '0+', '+0', '1+', '+1']
+def create_data(heldout, equations):
 
     # arrays for training and testing's inputs and labels 
     training_inputs=[]
@@ -133,4 +125,18 @@ def create_data():
     test_labels_file = open("test_labels.pkl", "wb")
     pickle.dump(test_labels, test_labels_file)
 
-create_data()
+
+def main():
+    # Write the equations you want heldout in the helout list e.g 1+2, 4+3, 9-0
+    heldout = ['1+2', '2+1', '1+6']
+
+    # Write the equations you want to generate: eg. +1, 1+, 0+, +0,
+    # For equations have only 1 digit, 
+    #       first operand: put 'first'
+    #       second operand: put 'third'
+    equations = ['first', 'third', '0+', '+0', '1+', '+1', '+2']
+
+    create_data(heldout, equations)
+
+if __name__ == "__main__":
+    main()
